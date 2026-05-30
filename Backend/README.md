@@ -180,3 +180,90 @@ Status: `200 OK`
 
 ### Error Responses
 - `401 Unauthorized` - missing or invalid authentication token.
+
+## `POST /captains/register`
+
+Registers a new captain and returns an authentication token.
+
+### Description
+This endpoint creates a new captain account using the provided full name, email, password, and vehicle details. The password is hashed before saving, and a JWT auth token is returned on successful registration.
+
+### Request URL
+`POST /captains/register`
+
+### Request Body
+Content-Type: `application/json`
+
+```json
+{
+  "fullName": {
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "vehicle": {
+    "color": "White",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Required Fields
+- `fullName.firstName` (string) - at least 3 characters
+- `fullName.lastName` (string)
+- `email` (string) - must be a valid email address
+- `password` (string) - at least 6 characters
+- `vehicle.color` (string) - at least 3 characters
+- `vehicle.plate` (string) - at least 3 characters
+- `vehicle.capacity` - required
+- `vehicle.vehicleType` (string) - must be one of `car`, `motorcycle`, or `truck`
+
+### Successful Response
+Status: `201 Created`
+
+```json
+{
+  "token": "<jwt-token>",
+  "captain": {
+    "_id": "<captain-id>",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "email": "john.doe@example.com",
+    "vehicle": {
+      "color": "White",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Error Responses
+- `400 Bad Request` - validation errors when required fields are missing or invalid.
+- `400 Bad Request` - captain already exists for the provided email.
+
+Example:
+
+```json
+{
+  "errors": [
+    {
+      "msg": "invalid email",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+```json
+{
+  "message": "Captain Allready exist"
+}
+```
