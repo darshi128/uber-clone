@@ -1,19 +1,26 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import uberdriver from '../assets/uberdriver.jpg'
 import { useState } from 'react'
+import axios from 'axios'
 
 function CaptainLogin() {
-    const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [CaptainData, setCaptainData] = useState({});
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
     e.preventDefault(); 
-    setCaptainData({ 
+    const captainData = ({ 
       email: email, 
       password: password 
     });
-    console.log(CaptainData);
+    const response = await axios.post('http://localhost:5000/captains/login', captainData);
+    if(response.status === 200){
+      const data = response.data;
+      localStorage.setItem('token', data.token);
+      navigate('/captain-home');
+    }
     setEmail('');
     setPassword('');
   }
